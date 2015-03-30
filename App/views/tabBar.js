@@ -1,30 +1,37 @@
-var { StyleSheet, TabBarIOS } = React;
+var { StyleSheet, TabBarIOS, View } = React;
 var TabBarItemIOS = TabBarIOS.Item;
 
+var LoadingView = require('./common/loading');
 var RepoView = require('./repo');
 var FeedView = require('./feed');
 
 var TabBarView = React.createClass({
   getInitialState: function(){
     return {
-      token: 123123123,
-      selectedTab: 'repos'
+      selectedTab: 'feeds',
+      loaded: false
     };
   },
-  getInitialComponent: function() {
-    if (!this.state.token) {
-      return {
-        component: require('./login'),
-        title: 'Login'
-      }
+  componentDidMount: function () {
+    this.fetchData();
+  },
+  fetchData: function () {
+    fetch(Api('user'))
+      .then((response) => { return response.json() })
+      .then((responseData) => {
+        DataStore.user = responseData;
+        this.setState({ loaded: true });
+      })
+      .done(() => {console.log(DataStore)});
+  },
+  render: function () {
+    if (!this.state.loaded) {
+      return (<LoadingView />);
     } else {
-      return {
-        component: require('./repo/repoList'),
-        title: 'Repos'
-      }
+      return this.renderTabBarView();
     }
   },
-  render: function() {
+  renderTabBarView: function() {
     return (
       <TabBarIOS
         selectedTab={this.state.selectedTab}>
@@ -53,7 +60,7 @@ var TabBarView = React.createClass({
           accessibilityLabel="Green Tab"
           selected={this.state.selectedTab === 'inbox'}
           onPress={() => {this.setState({ selectedTab: 'inbox' })}}>
-          <RepoView />
+          <View />
         </TabBarItemIOS>
 
         <TabBarItemIOS
@@ -63,7 +70,7 @@ var TabBarView = React.createClass({
           accessibilityLabel="Green Tab"
           selected={this.state.selectedTab === 'settings'}
           onPress={() => {this.setState({ selectedTab: 'settings' })}}>
-          <RepoView />
+          <View />
         </TabBarItemIOS>
       </TabBarIOS>
     );

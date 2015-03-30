@@ -1,9 +1,9 @@
 // access token
-var ACCESS_TOKEN;
-var BASE_URL = 'https://api.github.com';
+var {access_token, base_url } = require('./config');
 
 module.exports = function (path) {
-  var url = `${BASE_URL}/${path}`;
-  if (ACCESS_TOKEN) { url = `${url}?access_token=${ACCESS_TOKEN}`; }
+  console.log(path);
+  var url = `${base_url}/${path}`;
+  if (access_token) { url = `${url}?access_token=${access_token}`; }
   return url;
 };

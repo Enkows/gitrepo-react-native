@@ -5,7 +5,7 @@ var DetailView = require('./../detail/repoDetail');
 
 var ListViewFactory = require('../../common/listView');
 
-var ListViewObject = ListViewFactory(CellView, 'users/Enkows/repos');
+var ListViewObject = ListViewFactory(CellView, `users/${DataStore.user.login}/repos`);
 
 var RepoListView = React.createClass(Object.assign(ListViewObject, {
   selectCell: function(data){

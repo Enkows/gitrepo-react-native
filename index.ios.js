@@ -6,6 +6,7 @@
 global.React = require('react-native');
 global.Styles = require('./app/views/common/styles');
 global.Api = require('./app/utils/api');
+global.DataStore = {};
 
 var TabBarView = require('./app/views/tabBar.js');
 
