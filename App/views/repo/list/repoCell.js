@@ -1,15 +1,13 @@
-var React = require('react-native');
 var { StyleSheet, Text, View, TouchableHighlight } = React;
 
 var RepoCellView = React.createClass({
   render: function () {
     data = this.props.data;
-    console.log(data, '\n');
     return (
       <TouchableHighlight onPress={this.props.onSelect} underlayColor={'#d2f5ff'}>
         <View style={Style.container}>
           <View style={Style.titleWrapper}>
-            <Text style={Style.title}>{data.full_name}</Text>
+            <Text style={Styles.anchor}>{data.full_name}</Text>
             <Text style={Style.desc} numberOfLines={2}>{data.description}</Text>
           </View>
         </View>

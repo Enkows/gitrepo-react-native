@@ -1,25 +1,21 @@
-var React = require('react-native');
 var { StyleSheet, NavigatorIOS } = React;
 
-var RepoView = React.createClass({
+var FeedView = React.createClass({
   getInitialState: function(){
     return {
-      token: 123123123,
-      selectedTab: 'feeds',
-      notifCount: 0,
-      presses: 0
+      token: 123123123
     };
   },
   getInitialComponent: function() {
     if (!this.state.token) {
       return {
-        component: require('../Login'),
+        component: require('../login'),
         title: 'Login'
       }
     } else {
       return {
-        component: require('./RepoList'),
-        title: 'Repos'
+        component: require('./list/feedList'),
+        title: 'Feeds'
       }
     }
   },
@@ -44,4 +40,4 @@ var Style = StyleSheet.create({
   }
 });
 
-module.exports = RepoView;
+module.exports = FeedView;

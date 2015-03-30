@@ -1,47 +1,88 @@
-var React = require('react-native');
-var { StyleSheet, Text, View, TouchableHighlight } = React;
+var { StyleSheet, Image, Text, View, TouchableHighlight } = React;
 
 var FeedCellView = React.createClass({
   render: function () {
-    data = this.props.data;
-    console.log(data, '\n');
+    var data = this.props.data;
     return (
-      <TouchableHighlight onPress={this.props.onSelect} underlayColor={'#d2f5ff'}>
-        <View style={Style.container}>
-          <View style={Style.titleWrapper}>
-            <Text style={Style.title}>{data.type}</Text>
+      <View>
+        <TouchableHighlight onPress={this.props.onSelect} underlayColor={'#d2f5ff'}>
+          <View style={Styles.row}>
+            <Image style={styles.avatar} source={{uri: data.actor.avatar_url}} />
+            {this.detectEventType()}
           </View>
-        </View>
-      </TouchableHighlight>
+        </TouchableHighlight>
+      </View>
     );
+  },
+  detectEventType: function () {
+    var data = this.props.data;
+    var renderFunc = this[`render${data.type}`];
+    return renderFunc ? renderFunc(data) : (<Text>{data.type}</Text>);
+  },
+  renderIssueCommentEvent: function (data) {
+    return (
+      <View style={styles.textWrapper}>
+        <View style={Styles.paragraph}>
+          <Text style={Styles.anchor}>{data.actor.login}</Text>
+          <Text style={styles.time}>{data.created_at}</Text>
+        </View>
+        <Text>
+          Commented on pull request&nbsp;
+          <Text style={Styles.anchor}>{`#${data.payload.issue.number}`}</Text>
+          &nbsp;on&nbsp;
+          <Text style={Styles.anchor}>{data.repo.name}</Text>
+        </Text>
+      </View>
+    )
+  },
+  renderIssuesEvent: function (data) {
+    return (
+      <View style={styles.textWrapper}>
+        <View style={Styles.paragraph}>
+          <Text style={Styles.anchor}>{data.actor.login}</Text>
+          <Text style={styles.time}>{data.created_at}</Text>
+        </View>
+        <Text>
+          Opened issue&nbsp;
+          <Text style={Styles.anchor}>{`#${data.payload.issue.number}`}</Text>
+        &nbsp;on&nbsp;
+          <Text style={Styles.anchor}>{data.repo.name}</Text>
+        </Text>
+      </View>
+    )
+  },
+  renderPullRequestEvent: function (data) {
+    return (
+      <View style={styles.textWrapper}>
+        <View style={Styles.paragraph}>
+          <Text style={Styles.anchor}>{data.actor.login}</Text>
+          <Text style={styles.time}>{data.created_at}</Text>
+        </View>
+        <Text>
+          Opened pull request&nbsp;
+          <Text style={Styles.anchor}>{`#${data.payload.pull_request.number}`}</Text>
+        &nbsp;on&nbsp;
+          <Text style={Styles.anchor}>{data.repo.name}</Text>
+        </Text>
+      </View>
+    )
   }
-
 });
 
-var Style = StyleSheet.create({
-  container: {
-    backgroundColor: '#ffffff',
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingLeft: 8,
-    paddingRight: 8,
-    borderBottomWidth: 1,
-    borderColor: '#E2E2E2'
+var styles = StyleSheet.create({
+  avatar: {
+    width: 30,
+    height: 30,
+    marginRight: 8,
+    backgroundColor: '#CCCCCC',
+    borderRadius: 5
   },
-  contentWrapper: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center'
+  textWrapper: {
+    flex: 1
   },
-  titleWrapper: {
-    flex: 1,
-    marginBottom: 5
-  },
-  desc: {
-    fontSize: 12,
+  time: {
+    marginLeft: 8,
+    fontSize: 11,
     color: '#666666'
   }
 });

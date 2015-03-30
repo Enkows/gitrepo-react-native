@@ -1,61 +1,47 @@
-var React = require('react-native');
 var { StyleSheet, Text, View, ListView } = React;
 
-var RepoDetailView = React.createClass({
-  getInitialState: function(){
+var LoadingView = require('../../common/loading');
+
+var DetailMenu = React.createClass({
+  getInitialState: function () {
+    var dataSource = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => r1 !== r2
+    });
+
     return {
-      repo: {},
-      loaded: false
-    };
-  },
-  componentDidMount: function(){
-    this.fetchData();
-  },
-  fetchData: function(){
-    data = this.props.data;
-    fetch(`https://api.github.com/repos/${data.full_name}/events`)
-      .then((response) => {
-        // console.log(response);
-        return response.json();
-      })
-      .then((responseData) => {
-        this.setState({
-          repo: responseData,
-          loaded: true
-        });
-      })
-      .done();
-  },
-  render: function() {
-    if (!this.state.loaded) {
-      return this.renderLoading();
-    } else {
-      return this.renderDetail();
+      dataSource: dataSource.cloneWithRows(this.props.menus)
     }
   },
-  renderLoading: function () {
+  render: function () {
     return (
-      <View style={Style.container}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  },
-  renderDetail: function () {
-    return (
-      <View style={Style.container}>
-      </View>
-    );
+      <ListView
+        dataSource={this.state.dataSource}
+        renderRow={(rowData) => <Text>{rowData}</Text>}
+      />
+    )
   }
 });
 
-var Style = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF'
-  },
+var RepoDetailView = React.createClass({
+  getInitialState: function(){
+    var repo = this.props.repo;
+    var menus = ['Source', 'Events'];
+    if (repo.has_issues) { menus.push('Issues'); }
+    if (repo.has_wiki) { menus.push('Wiki'); }
+    if (repo.has_pages) { menus.push('Pages'); }
 
+    return {
+      repo: repo,
+      menus: menus
+    };
+  },
+  render: function() {
+    return (
+      <View style={Styles.container}>
+        <DetailMenu menus={this.state.menus} />
+      </View>
+    );
+  }
 });
 
 module.exports = RepoDetailView;
