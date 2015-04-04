@@ -1,0 +1,20 @@
+#!/usr/bin/env coffee
+{ spawn, exec } = require 'child_process'
+
+port = 8081
+assetsRoots = process.cwd() + '/iOS/Images.xcassets'
+packagerPath = 'node_modules/react-native/packager/packager.js'
+
+outputPath = '.build/main.jsbundle'
+releaseCMD = "curl http://localhost:#{port}/index.ios.bundle?dev=false -o #{outputPath} && gulp release"
+
+packagerReady = ->
+  console.log 'Running release task...'
+  exec(releaseCMD).on 'close', ->
+    console.log 'Done.'
+    process.exit()
+
+console.log 'Starting react native packager...'
+packager = spawn 'node', [packagerPath, "--assetsRoots=#{assetsRoots}", "--port=#{port}"]
+packager.stdout.on 'data', (data) ->
+  packagerReady() if ~data.toString().indexOf 'ready'

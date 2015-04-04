@@ -1,0 +1,12 @@
+#!/usr/bin/env coffee
+spawn = require('child_process').spawn
+assetsRoots = process.cwd() + '/iOS/Images.xcassets'
+packagerPath = 'node_modules/react-native/packager/packager.js'
+
+# gulp = spawn 'gulp'
+# gulp.stdout.pipe process.stdout
+# gulp.stderr.pipe process.stderr
+
+packager = spawn 'node', [packagerPath, "--assetsRoots=#{assetsRoots}"]
+packager.stdout.pipe process.stdout
+packager.stderr.pipe process.stderr
